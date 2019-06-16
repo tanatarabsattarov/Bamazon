@@ -35,8 +35,8 @@ Stock: ${result.stock_quantity}
 ========================================================================
 `
         ));
+        placeOrder();
     })
-    placeOrder();
 };
 
 placeOrder = () => {
@@ -87,12 +87,14 @@ placeOrder = () => {
                         connection.query(query2, [{ stock_quantity: newQuantity }, { id: answer.product_id }], (err, res) => {
                             if (err) throw (err);
                             console.log("Your product #" + answer.product_id + " has been decreased in quantity");
-                            console.log("Current stock for this product is " + newQuantity);
+                            console.log("Current stock for this product is " + newQuantity + "\n");
+                            return placeOrder();
                         });
                     });
                 }
                 if (isNaN(res) === false) {
-                    console.log("\nInsufficient quantity or product ID doesn't exist! Please try another amount/product ID!");
+                    console.log("\nInsufficient quantity or product ID doesn't exist! Please try another amount/product ID!\n");
+                    return placeOrder();
                 }
             })
         })
