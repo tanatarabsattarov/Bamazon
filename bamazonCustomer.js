@@ -69,8 +69,9 @@ placeOrder = () => {
             connection.query(query, [answer.product_id, +answer.product_q], function (err, res) {
                 if (err) throw (err);
                 if (res) {
-                    res.forEach((result) => console.log(
-                        `
+                    res.forEach((result) => {
+                        console.log(
+                            `
     YOUR RECEIPT:
     ==========================================
     #${result.id}
@@ -80,17 +81,19 @@ placeOrder = () => {
     Quantity: ${answer.product_q}
     YOUR TOTAL: $${result.price * +answer.product_q}
     ==========================================
-    `
-                    ));
+    `);
+                        let query2 = "UPDATE products SET ? WHERE ?";
+                        let newQuantity = result.stock_quantity - +answer.product_q;
+                        connection.query(query2, [{ stock_quantity: newQuantity }, { id: answer.product_id }], (err, res) => {
+                            if (err) throw (err);
+                            console.log("Your product #" + answer.product_id + " has been decreased in quantity");
+                            console.log("Current stock for this product is " + newQuantity);
+                        });
+                    });
                 }
                 if (isNaN(res) === false) {
-                    console.log("Insufficient quantity or product ID doesn't exist! Please try another amount/product ID!")
+                    console.log("\nInsufficient quantity or product ID doesn't exist! Please try another amount/product ID!");
                 }
             })
         })
-    // updateDatabase();
 };
-
-// updateDatabase = () => {
-
-// }
