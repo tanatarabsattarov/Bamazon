@@ -16,11 +16,36 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
     if (err) throw (err);
     console.log("connected as id " + connection.threadId);
-    queryAll();
+    askAction();
 });
 
 // FUNCTIONS
 // ====================================================
+
+function askAction() {
+    inquirer
+        .prompt({
+            name: "action",
+            type: "rawlist",
+            message: "What would you like to do?",
+            choices: [
+                "Show all products",
+                "Place an order"
+            ]
+        })
+        .then(function (answer) {
+            switch (answer.action) {
+                case "Show all products":
+                    queryAll();
+                    break;
+
+                case "Place an order":
+                    placeOrder();
+                    break;
+            }
+        });
+}
+
 queryAll = () => {
     let query = "SELECT * FROM products";
     connection.query(query, (err, res) => {
@@ -35,7 +60,7 @@ Stock: ${result.stock_quantity}
 ========================================================================
 `
         ));
-        placeOrder();
+        return askAction();
     })
 };
 
@@ -88,7 +113,7 @@ placeOrder = () => {
                             if (err) throw (err);
                             console.log("Your product #" + answer.product_id + " has been decreased in quantity");
                             console.log("Current stock for this product is " + newQuantity + "\n");
-                            return placeOrder();
+                            return askAction();
                         });
                     });
                 }
