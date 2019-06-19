@@ -4,6 +4,10 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const colors = require("colors");
 const Table = require('cli-table3');
+
+
+// MySQL CONNECTION
+// ====================================================
 const connection = mysql.createConnection({
     host: "localhost",
     port: 8889,
@@ -12,9 +16,6 @@ const connection = mysql.createConnection({
     database: "bamazon"
 });
 
-
-// MySQL CONNECTION
-// ====================================================
 connection.connect((err) => {
     if (err) throw (err);
     process.stdout.write('\033c\033[3J');
@@ -107,7 +108,7 @@ placeOrder = () => {
     Department: ${result.department_name}
     Price: $${result.price}
     Quantity: ${answer.product_q}
-    YOUR TOTAL: $${result.price * +answer.product_q}
+    YOUR TOTAL: $${(result.price * +answer.product_q).toFixed(2)}
     ==========================================
     `.bold.yellow);
                         let query2 = "UPDATE products SET ? WHERE ?";
